@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import MetricCard from "@/components/ui/MetricCard";
+import { useToast, ToastContainer } from "@/components/ui/Toast";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 
 const departmentData = [
@@ -22,6 +23,7 @@ const adoptionData = [
 export default function AdminDashboard() {
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
   const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } };
+  const { toasts, show } = useToast();
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 max-w-[1400px]">
@@ -37,7 +39,7 @@ export default function AdminDashboard() {
             <span className="w-2 h-2 rounded-full bg-accent-green animate-pulse" />
             <span className="text-xs font-medium text-accent-green">System Healthy</span>
           </div>
-          <button className="px-4 py-2 rounded-xl bg-bg-hover border border-border-default text-xs font-bold hover:text-text-primary transition-colors">
+          <button onClick={() => show("📄 Generating compliance report...", "success")} className="px-4 py-2 rounded-xl bg-bg-hover border border-border-default text-xs font-bold hover:text-text-primary transition-colors">
             Generate Compliance Report
           </button>
         </div>
@@ -130,6 +132,7 @@ export default function AdminDashboard() {
           </table>
         </div>
       </motion.div>
+      <ToastContainer toasts={toasts} />
     </motion.div>
   );
 }

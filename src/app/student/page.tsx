@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import MetricCard from "@/components/ui/MetricCard";
 import GlowOrb from "@/components/ui/GlowOrb";
 import SkillRadar from "@/components/ui/SkillRadar";
 import ActivityHeatmap from "@/components/ui/ActivityHeatmap";
 import { getGreeting, getRandomMotivation } from "@/lib/utils";
+import { useToast, ToastContainer } from "@/components/ui/Toast";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, BarChart, Bar,
@@ -59,6 +61,20 @@ const aiMessages = [
 export default function StudentDashboard() {
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
   const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } };
+  const [mentorInput, setMentorInput] = useState("");
+  const [chatMessages, setChatMessages] = useState(aiMessages);
+  const { toasts, show } = useToast();
+
+  const handleMentorSend = () => {
+    if (!mentorInput.trim()) return;
+    setChatMessages((prev) => [...prev, { text: mentorInput, type: "user" }]);
+    setMentorInput("");
+    show("Message sent to AI Mentor", "success");
+    // Simulate AI response
+    setTimeout(() => {
+      setChatMessages((prev) => [...prev, { text: "That's a great question! Let me analyze your recent work and get back to you with a personalized recommendation.", type: "insight" }]);
+    }, 1200);
+  };
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 max-w-[1400px]">
@@ -93,7 +109,9 @@ export default function StudentDashboard() {
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           {journeySteps.map((step, i) => (
             <div key={i} className="flex items-center gap-2 shrink-0">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl border" style={{
+              <button
+                onClick={() => show(`${step.label}: ${step.status === "done" ? "Completed ✓" : step.status === "active" ? "In progress..." : "Coming up next"}`, step.status === "done" ? "success" : "info")}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl border transition-all hover:opacity-80" style={{
                 borderColor: step.color + "40",
                 background: step.status === "active" ? step.color + "15" : "transparent",
               }}>
@@ -104,7 +122,7 @@ export default function StudentDashboard() {
                 <span className="text-xs font-medium" style={{ color: step.color === "#555577" ? "#555577" : "#e8e8f0" }}>
                   {step.label}
                 </span>
-              </div>
+              </button>
               {i < journeySteps.length - 1 && (
                 <div className="w-6 h-px" style={{ background: step.color + "40" }} />
               )}
@@ -161,17 +179,24 @@ export default function StudentDashboard() {
               <p className="text-[10px] text-accent-green">Online • Context-aware</p>
             </div>
           </div>
-          <div className="flex-1 space-y-3 mb-4">
-            {aiMessages.map((msg, i) => (
-              <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 + i * 0.2 }}
-                className="glass-card-sm p-3 rounded-xl text-xs text-text-secondary leading-relaxed">
+          <div className="flex-1 space-y-3 mb-4 max-h-48 overflow-y-auto">
+            {chatMessages.map((msg, i) => (
+              <motion.div key={i} initial={{ opacity: 0, x: msg.type === "user" ? 10 : -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i < 3 ? 0.5 + i * 0.2 : 0 }}
+                className={`p-3 rounded-xl text-xs leading-relaxed ${msg.type === "user" ? "bg-accent-blue/15 text-accent-blue ml-6 border border-accent-blue/20" : "glass-card-sm text-text-secondary"}`}>
                 {msg.text}
               </motion.div>
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <input type="text" placeholder="Ask your AI mentor..." className="flex-1 bg-bg-hover border border-border-default rounded-xl px-3 py-2 text-xs text-text-primary placeholder:text-text-muted outline-none focus:border-accent-purple/40" />
-            <button className="p-2 rounded-xl bg-accent-purple/20 text-accent-purple hover:bg-accent-purple/30 transition-colors">
+            <input
+              type="text"
+              value={mentorInput}
+              onChange={(e) => setMentorInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleMentorSend()}
+              placeholder="Ask your AI mentor..."
+              className="flex-1 bg-bg-hover border border-border-default rounded-xl px-3 py-2 text-xs text-text-primary placeholder:text-text-muted outline-none focus:border-accent-purple/40"
+            />
+            <button onClick={handleMentorSend} className="p-2 rounded-xl bg-accent-purple/20 text-accent-purple hover:bg-accent-purple/30 transition-colors">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </button>
           </div>
@@ -222,6 +247,7 @@ export default function StudentDashboard() {
             { name: "DP", level: 4, xp: 440, color: "#ec4899" },
           ].map((skill, i) => (
             <motion.div key={i} className="glass-card-sm p-4 text-center group hover:border-border-active transition-all cursor-pointer"
+              onClick={() => show(`${skill.name}: Level ${skill.level} · ${skill.xp} XP`, "info")}
               whileHover={{ y: -2 }}>
               <div className="text-2xl font-bold mb-1" style={{ color: skill.color }}>Lv.{skill.level}</div>
               <p className="text-xs font-medium text-text-primary mb-1">{skill.name}</p>
@@ -234,6 +260,8 @@ export default function StudentDashboard() {
           ))}
         </div>
       </motion.div>
+
+      <ToastContainer toasts={toasts} />
     </motion.div>
   );
 }

@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import MetricCard from "@/components/ui/MetricCard";
 import GlowOrb from "@/components/ui/GlowOrb";
+import { useToast, ToastContainer } from "@/components/ui/Toast";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const classEngagementData = [
@@ -22,6 +24,8 @@ const riskStudents = [
 export default function FacultyDashboard() {
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
   const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } };
+  const { toasts, show } = useToast();
+  const [broadcastSent, setBroadcastSent] = useState(false);
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 max-w-[1400px]">
@@ -37,8 +41,11 @@ export default function FacultyDashboard() {
             <span className="w-2 h-2 rounded-full bg-accent-green animate-pulse" />
             <span className="text-xs font-medium">CS302 Lab Active</span>
           </div>
-          <button className="px-4 py-2 rounded-xl bg-gradient-to-r from-accent-purple to-accent-pink text-white text-xs font-bold hover:opacity-90">
-            Broadcast Message
+          <button
+            onClick={() => { setBroadcastSent(true); show("📢 Broadcast sent to all active students", "success"); setTimeout(() => setBroadcastSent(false), 2000); }}
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-accent-purple to-accent-pink text-white text-xs font-bold hover:opacity-90 transition-opacity"
+          >
+            {broadcastSent ? "✓ Sent!" : "Broadcast Message"}
           </button>
         </div>
       </div>
@@ -108,7 +115,10 @@ export default function FacultyDashboard() {
                 <p className="text-xs text-text-secondary mb-2 leading-relaxed">{student.reason}</p>
                 <div className="flex items-center justify-between mt-3">
                   <span className="text-[10px] text-text-muted">Last active: {student.lastActive}</span>
-                  <button className="text-[10px] bg-bg-hover hover:bg-accent-blue/20 text-accent-blue px-3 py-1 rounded transition-colors">
+                  <button
+                    onClick={() => show(`Joining ${student.name}'s session...`, "info")}
+                    className="text-[10px] bg-bg-hover hover:bg-accent-blue/20 text-accent-blue px-3 py-1 rounded transition-colors"
+                  >
                     Join Session →
                   </button>
                 </div>
@@ -118,6 +128,7 @@ export default function FacultyDashboard() {
         </motion.div>
       </div>
 
+      <ToastContainer toasts={toasts} />
     </motion.div>
   );
 }
