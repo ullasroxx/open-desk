@@ -1,16 +1,29 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { createContext, useContext, useEffect, useState, useCallback, useMemo, type ReactNode } from "react";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
-import type { Database } from "@/lib/database.types";
 
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+interface Profile {
+  id: string;
+  role: string;
+  full_name: string;
+  email: string;
+  roll_number: string | null;
+  semester: number | null;
+  department_id: string | null;
+  avatar_url: string | null;
+  focus_score: number;
+  mastery_score: number;
+  streak_days: number;
+  xp: number;
+}
 
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
+  configured: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, metadata: Record<string, string>) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -23,9 +36,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const configured = isSupabaseConfigured();
+  
+  // Memoize the supabase client so it doesn't create a new instance on every render
+  const supabase = useMemo(() => {
+    return configured ? createClient() : null;
+  }, [configured]);
 
   const fetchProfile = useCallback(async (userId: string) => {
+    if (!supabase) return;
     const { data } = await supabase
       .from("profiles")
       .select("*")
@@ -35,14 +54,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [supabase]);
 
   useEffect(() => {
-    // Get initial session
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
       if (user) fetchProfile(user.id);
       setLoading(false);
+    }).catch(() => {
+      setLoading(false);
     });
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       const currentUser = session?.user ?? null;
       setUser(currentUser);
@@ -57,11 +81,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [supabase, fetchProfile]);
 
   const signIn = async (email: string, password: string) => {
+    if (!supabase) return { error: new Error("Supabase not configured") };
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error: error as Error | null };
   };
 
   const signUp = async (email: string, password: string, metadata: Record<string, string>) => {
+    if (!supabase) return { error: new Error("Supabase not configured") };
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -71,6 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    if (!supabase) return;
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
@@ -81,7 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signIn, signUp, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, configured, signIn, signUp, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

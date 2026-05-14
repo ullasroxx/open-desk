@@ -4,7 +4,29 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
+
+function SetupBanner() {
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 mb-6 border border-amber-500/20">
+      <div className="flex items-start gap-3">
+        <span className="text-2xl">⚠️</span>
+        <div>
+          <h3 className="text-sm font-semibold text-amber-400 mb-1">Supabase Not Connected</h3>
+          <p className="text-xs text-text-secondary leading-relaxed">
+            The authentication backend isn&apos;t configured yet. To enable login & signup:
+          </p>
+          <ol className="text-xs text-text-muted mt-2 space-y-1 list-decimal list-inside">
+            <li>Create a project at <span className="text-accent-blue">supabase.com</span></li>
+            <li>Run <code className="text-accent-purple bg-bg-hover px-1.5 py-0.5 rounded">supabase/schema.sql</code> in the SQL Editor</li>
+            <li>Copy your URL & anon key to <code className="text-accent-purple bg-bg-hover px-1.5 py-0.5 rounded">.env.local</code></li>
+            <li>Restart the dev server</li>
+          </ol>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function SignUpPage() {
   const [fullName, setFullName] = useState("");
@@ -15,12 +37,19 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
+  const configured = isSupabaseConfigured();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!configured) {
+      setError("Supabase is not configured. Please add your credentials to .env.local");
+      return;
+    }
+
     setLoading(true);
+    const supabase = createClient()!;
 
     const { error: authError } = await supabase.auth.signUp({
       email,
@@ -46,10 +75,7 @@ export default function SignUpPage() {
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-card p-8 max-w-md text-center">
           <div className="text-5xl mb-4">✅</div>
           <h2 className="text-xl font-bold gradient-text mb-2">Account Created!</h2>
-          <p className="text-sm text-text-secondary mb-6">Check your email for a confirmation link, then sign in.</p>
-          <Link href="/auth/login" className="inline-block px-6 py-2.5 rounded-xl bg-gradient-to-r from-accent-blue to-accent-purple text-white text-sm font-semibold hover:opacity-90">
-            Go to Login
-          </Link>
+          <p className="text-sm text-text-secondary mb-6">Check your email for a confirmation link to access the platform.</p>
         </motion.div>
       </div>
     );
@@ -69,6 +95,8 @@ export default function SignUpPage() {
           <h1 className="text-2xl font-bold gradient-text">Create Account</h1>
           <p className="text-sm text-text-muted mt-1">Join the OpenDesk platform</p>
         </div>
+
+        {!configured && <SetupBanner />}
 
         <form onSubmit={handleSignUp} className="glass-card p-8 space-y-5">
           {error && (
@@ -115,10 +143,7 @@ export default function SignUpPage() {
             {loading ? "Creating Account..." : "Create Account"}
           </button>
 
-          <p className="text-center text-xs text-text-muted">
-            Already have an account?{" "}
-            <Link href="/auth/login" className="text-accent-blue hover:underline">Sign In</Link>
-          </p>
+          {/* Login link removed */}
         </form>
       </motion.div>
     </div>

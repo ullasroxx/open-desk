@@ -31,7 +31,7 @@ export default function LandingPage() {
             href="/student"
             className="text-sm text-text-secondary hover:text-text-primary transition-colors px-4 py-2"
           >
-            Sign In
+            Explore
           </Link>
           <Link
             href="/student"
