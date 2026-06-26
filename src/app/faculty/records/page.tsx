@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useToast, ToastContainer } from "@/components/ui/Toast";
 
 const records = [
   { student: "Aarav Sharma", id: "CS21001", labs: "12/12", assignments: "8/8", viva: "95%", internal: "48/50", grade: "O" },
@@ -12,6 +13,8 @@ const records = [
 ];
 
 export default function AcademicRecordsPage() {
+    const { toasts, show } = useToast();
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 max-w-[1400px]">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -20,10 +23,10 @@ export default function AcademicRecordsPage() {
           <p className="text-sm text-text-muted">Audit-ready records with timestamps and compliance logs</p>
         </div>
         <div className="flex gap-3">
-          <button className="px-4 py-2.5 rounded-xl bg-bg-hover border border-border-default text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors">
+          <button onClick={() => show("Downloading report...", "info")} className="px-4 py-2.5 rounded-xl bg-bg-hover border border-border-default text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors">
             Export CSV
           </button>
-          <button className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-accent-purple to-accent-pink text-white text-xs font-semibold hover:opacity-90">
+          <button onClick={() => show("Exporting all records...", "info")} className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-accent-purple to-accent-pink text-white text-xs font-semibold hover:opacity-90">
             Generate Report
           </button>
         </div>
@@ -87,7 +90,7 @@ export default function AcademicRecordsPage() {
                     }`}>{r.grade}</span>
                   </td>
                   <td className="py-3 px-4">
-                    <button className="text-[10px] text-accent-pink hover:underline">View Details</button>
+                    <button onClick={() => show("Opening student details...", "info")} className="text-[10px] text-accent-pink hover:underline">View Details</button>
                   </td>
                 </tr>
               ))}
@@ -95,6 +98,7 @@ export default function AcademicRecordsPage() {
           </table>
         </div>
       </div>
+      <ToastContainer toasts={toasts} />
     </motion.div>
   );
 }

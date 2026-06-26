@@ -2,26 +2,29 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import GlowOrb from "@/components/ui/GlowOrb";
+import { useToast, ToastContainer } from "@/components/ui/Toast";
 
 const students = [
-  { id: "CS21001", name: "Aarav Sharma", focus: 92, mastery: 88, risk: "Low", state: "flow" as const, aiDep: 12, streak: 14 },
-  { id: "CS21012", name: "Priya Nair", focus: 78, mastery: 82, risk: "Low", state: "flow" as const, aiDep: 25, streak: 8 },
-  { id: "CS21024", name: "Rahul Verma", focus: 45, mastery: 55, risk: "High", state: "struggling" as const, aiDep: 78, streak: 2 },
-  { id: "CS21033", name: "Meera Reddy", focus: 88, mastery: 91, risk: "Low", state: "flow" as const, aiDep: 8, streak: 21 },
-  { id: "CS21045", name: "John Doe", focus: 32, mastery: 48, risk: "Critical", state: "distracted" as const, aiDep: 92, streak: 0 },
-  { id: "CS21051", name: "Ananya Iyer", focus: 71, mastery: 74, risk: "Medium", state: "struggling" as const, aiDep: 45, streak: 5 },
-  { id: "CS21068", name: "Karthik Rao", focus: 85, mastery: 80, risk: "Low", state: "flow" as const, aiDep: 18, streak: 11 },
-  { id: "CS21079", name: "Divya Menon", focus: 60, mastery: 65, risk: "Medium", state: "idle" as const, aiDep: 55, streak: 3 },
+  { id: "CS21045", name: "John Doe", focus: 42, mastery: 58, risk: "High", state: "struggling" as const, aiDep: 35, streak: 2 },
+  { id: "CS21012", name: "Alice Smith", focus: 68, mastery: 72, risk: "Medium", state: "flow" as const, aiDep: 65, streak: 5 },
+  { id: "CS21088", name: "Bob Wilson", focus: 55, mastery: 60, risk: "Medium", state: "idle" as const, aiDep: 90, streak: 0 },
+  { id: "CS21034", name: "Priya Sharma", focus: 91, mastery: 88, risk: "Low", state: "flow" as const, aiDep: 15, streak: 12 },
+  { id: "CS21056", name: "Rahul Verma", focus: 75, mastery: 70, risk: "Low", state: "flow" as const, aiDep: 30, streak: 3 },
+  { id: "CS21023", name: "Meera Patel", focus: 82, mastery: 76, risk: "Low", state: "flow" as const, aiDep: 22, streak: 7 },
 ];
 
 export default function StudentIntelligencePage() {
   const [filter, setFilter] = useState("All");
   const [selected, setSelected] = useState<string | null>(null);
+  const router = useRouter();
+  const { toasts, show } = useToast();
 
   const filtered = filter === "All" ? students : students.filter(s =>
     filter === "At Risk" ? s.risk === "High" || s.risk === "Critical" :
-    filter === "Flow" ? s.state === "flow" : s.state === "struggling" || s.state === "distracted"
+    filter === "Flow" ? s.state === "flow" : s.state === "struggling" || s.state === "idle"
   );
 
   const selectedStudent = students.find(s => s.id === selected);
@@ -127,10 +130,12 @@ export default function StudentIntelligencePage() {
                 ))}
               </div>
               <div className="mt-6 space-y-2">
-                <button className="w-full py-2.5 rounded-xl bg-accent-pink/15 text-accent-pink text-xs font-semibold hover:bg-accent-pink/25 transition-colors">
+                <Link href={`/faculty/students/${selectedStudent.id}`}
+                  className="w-full py-2.5 rounded-xl bg-accent-pink/15 text-accent-pink text-xs font-semibold hover:bg-accent-pink/25 transition-colors flex items-center justify-center gap-1">
                   View Full Profile →
-                </button>
-                <button className="w-full py-2.5 rounded-xl bg-bg-hover border border-border-default text-text-secondary text-xs font-semibold hover:text-text-primary transition-colors">
+                </Link>
+                <button onClick={() => show(`💬 Nudge sent to ${selectedStudent.name}`, "success")}
+                  className="w-full py-2.5 rounded-xl bg-bg-hover border border-border-default text-text-secondary text-xs font-semibold hover:text-text-primary transition-colors">
                   Send Intervention Message
                 </button>
               </div>
@@ -143,6 +148,8 @@ export default function StudentIntelligencePage() {
           )}
         </div>
       </div>
+
+      <ToastContainer toasts={toasts} />
     </motion.div>
   );
 }

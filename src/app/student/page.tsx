@@ -40,8 +40,8 @@ const skills = [
   { name: "Code Quality", value: 78, color: "#ec4899" },
 ];
 
-const heatmapData = Array.from({ length: 7 }, () =>
-  Array.from({ length: 20 }, () => Math.floor(Math.random() * 8))
+const heatmapData = Array.from({ length: 7 }, (_, i) =>
+  Array.from({ length: 20 }, (_, j) => ((i * 3 + j * 7) % 8))
 );
 
 const journeySteps = [

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useToast, ToastContainer } from "@/components/ui/Toast";
 
 const projects = [
   { id: 1, title: "Distributed Key-Value Store", tech: ["Go", "Raft", "gRPC"], type: "Capstone", rating: "Outstanding", desc: "A fault-tolerant distributed datastore using the Raft consensus algorithm." },
@@ -18,6 +19,8 @@ const achievements = [
 export default function PortfolioPage() {
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
   const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } };
+
+    const { toasts, show } = useToast();
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-8 max-w-[1200px]">
@@ -45,10 +48,10 @@ export default function PortfolioPage() {
             </div>
           </div>
           <div className="shrink-0 flex gap-3">
-            <button className="px-5 py-2.5 rounded-xl bg-bg-hover border border-border-default hover:border-accent-blue/50 text-sm font-medium transition-colors">
+            <button onClick={() => show("Share Profile link copied!", "info")} className="px-5 py-2.5 rounded-xl bg-bg-hover border border-border-default hover:border-accent-blue/50 text-sm font-medium transition-colors">
               Export PDF
             </button>
-            <button className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-blue to-accent-purple text-white text-sm font-medium hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(79,143,255,0.3)]">
+            <button onClick={() => show("Resume download started!", "info")} className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-blue to-accent-purple text-white text-sm font-medium hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(79,143,255,0.3)]">
               Share Profile
             </button>
           </div>
@@ -115,7 +118,7 @@ export default function PortfolioPage() {
       <motion.div variants={item} className="glass-card p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">Project Archives</h3>
-          <button className="text-xs text-accent-blue hover:underline">View All →</button>
+          <button onClick={() => show("Viewing all achievements", "info")} className="text-xs text-accent-blue hover:underline">View All →</button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((proj) => (
@@ -140,6 +143,7 @@ export default function PortfolioPage() {
           ))}
         </div>
       </motion.div>
+      <ToastContainer toasts={toasts} />
     </motion.div>
   );
 }

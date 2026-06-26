@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useToast, ToastContainer } from "@/components/ui/Toast";
 
 const vivaRecords = [
   { student: "Aarav Sharma", id: "CS21001", topic: "BST Operations", score: 92, confidence: 88, depth: "Excellent", date: "May 12" },
@@ -19,6 +20,8 @@ export default function VivaIntelligencePage() {
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } };
   const item = { hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0 } };
 
+    const { toasts, show } = useToast();
+
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 max-w-[1400px]">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -26,7 +29,7 @@ export default function VivaIntelligencePage() {
           <h1 className="text-2xl font-bold mb-1">Viva Intelligence</h1>
           <p className="text-sm text-text-muted">AI-powered viva analytics and question bank management</p>
         </div>
-        <button className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-purple to-accent-pink text-white text-sm font-bold hover:opacity-90">
+        <button onClick={() => show("Launching AI Viva Session...", "info")} className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-purple to-accent-pink text-white text-sm font-bold hover:opacity-90">
           + Schedule New Viva
         </button>
       </div>
@@ -85,7 +88,7 @@ export default function VivaIntelligencePage() {
       <motion.div variants={item} className="glass-card p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">AI Question Bank Analytics</h3>
-          <button className="text-xs text-accent-pink hover:underline">Manage Bank →</button>
+          <button onClick={() => show("Opening Question Bank Manager...", "info")} className="text-xs text-accent-pink hover:underline">Manage Bank →</button>
         </div>
         <div className="space-y-3">
           {questionBank.map((q, i) => (
@@ -115,6 +118,7 @@ export default function VivaIntelligencePage() {
           ))}
         </div>
       </motion.div>
+      <ToastContainer toasts={toasts} />
     </motion.div>
   );
 }

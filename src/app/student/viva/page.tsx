@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useToast, ToastContainer } from "@/components/ui/Toast";
 
 const vivaQuestions = [
   { q: "Explain the time complexity of BST insertion in the worst case.", difficulty: "Medium", topic: "BST" },
@@ -17,7 +18,9 @@ export default function VivaPage() {
   const [confidence, setConfidence] = useState(72);
 
   if (!started) {
-    return (
+      const { toasts, show } = useToast();
+
+  return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center min-h-[70vh]">
         <div className="text-center max-w-lg">
           <motion.div className="w-24 h-24 mx-auto mb-8 rounded-3xl bg-gradient-to-br from-accent-purple to-accent-pink flex items-center justify-center"
@@ -106,7 +109,7 @@ export default function VivaPage() {
         />
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center gap-2">
-            <button className="p-2.5 rounded-xl bg-bg-hover border border-border-default text-text-secondary hover:text-text-primary transition-colors">
+            <button onClick={() => show("Recording paused", "info")} className="p-2.5 rounded-xl bg-bg-hover border border-border-default text-text-secondary hover:text-text-primary transition-colors">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
             </button>
             <span className="text-[10px] text-text-muted">Voice answer</span>
@@ -130,6 +133,7 @@ export default function VivaPage() {
           </motion.div>
         ))}
       </div>
+      <ToastContainer toasts={toasts} />
     </motion.div>
   );
 }

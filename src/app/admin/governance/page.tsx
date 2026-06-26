@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useToast, ToastContainer } from "@/components/ui/Toast";
 
 const aiUsageTrend = [
   { week: "W1", hints: 320, solutions: 45, flagged: 8 },
@@ -30,6 +31,8 @@ export default function GovernancePage() {
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } };
   const item = { hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0 } };
 
+    const { toasts, show } = useToast();
+
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 max-w-[1400px]">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -37,7 +40,7 @@ export default function GovernancePage() {
           <h1 className="text-2xl font-bold mb-1">AI Governance</h1>
           <p className="text-sm text-text-muted">Track AI dependency, transparency, suspicious behavior, and ethical usage</p>
         </div>
-        <button className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-amber to-accent-red text-white text-sm font-bold hover:opacity-90">
+        <button onClick={() => show("Add Policy dialog coming soon!", "info")} className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-amber to-accent-red text-white text-sm font-bold hover:opacity-90">
           Configure Policies
         </button>
       </div>
@@ -141,6 +144,7 @@ export default function GovernancePage() {
           </table>
         </div>
       </motion.div>
+      <ToastContainer toasts={toasts} />
     </motion.div>
   );
 }

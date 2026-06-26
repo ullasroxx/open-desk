@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useToast, ToastContainer } from "@/components/ui/Toast";
 
 const labs = [
   { id: 1, name: "Data Structures - BST", variants: 3, completion: "42%", ai: "Adaptive", status: "Active" },
@@ -12,6 +13,8 @@ export default function LabManagementPage() {
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
   const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } };
 
+    const { toasts, show } = useToast();
+
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 max-w-[1200px]">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -19,7 +22,7 @@ export default function LabManagementPage() {
           <h1 className="text-2xl font-bold mb-1">Lab Management</h1>
           <p className="text-sm text-text-muted">Create adaptive practical labs with AI behavioral rules</p>
         </div>
-        <button className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-purple to-accent-pink text-white text-sm font-bold shadow-lg hover:opacity-90">
+        <button onClick={() => show("Create Lab dialog coming soon!", "info")} className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-purple to-accent-pink text-white text-sm font-bold shadow-lg hover:opacity-90">
           + Create New Lab
         </button>
       </div>
@@ -78,6 +81,7 @@ export default function LabManagementPage() {
           </div>
         </motion.div>
       </div>
+      <ToastContainer toasts={toasts} />
     </motion.div>
   );
 }

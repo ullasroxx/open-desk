@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useToast, ToastContainer } from "@/components/ui/Toast";
 
 const settings = {
   profile: { name: "Sarah Jenkins", email: "sarah.jenkins@vtu.edu", roll: "CS21045", semester: "6th", department: "Computer Science" },
@@ -20,6 +21,8 @@ export default function SettingsPage() {
   const toggle = (id: string) => {
     setPrefs(prefs.map(p => p.id === id ? { ...p, enabled: !p.enabled } : p));
   };
+
+    const { toasts, show } = useToast();
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 max-w-3xl">
@@ -43,7 +46,7 @@ export default function SettingsPage() {
             </div>
           ))}
         </div>
-        <button className="mt-6 px-6 py-2.5 rounded-xl bg-gradient-to-r from-accent-blue to-accent-purple text-white text-sm font-semibold hover:opacity-90 transition-opacity">
+        <button onClick={() => show("Settings saved!", "info")} className="mt-6 px-6 py-2.5 rounded-xl bg-gradient-to-r from-accent-blue to-accent-purple text-white text-sm font-semibold hover:opacity-90 transition-opacity">
           Save Changes
         </button>
       </div>
@@ -81,11 +84,12 @@ export default function SettingsPage() {
             <p className="text-sm font-medium text-text-primary">Delete All Learning Data</p>
             <p className="text-xs text-text-muted">Permanently remove all analytics, submissions, and history</p>
           </div>
-          <button className="px-4 py-2 rounded-xl border border-accent-red/30 text-accent-red text-xs font-semibold hover:bg-accent-red/10 transition-colors">
+          <button onClick={() => show("This action is irreversible. Feature coming soon.", "info")} className="px-4 py-2 rounded-xl border border-accent-red/30 text-accent-red text-xs font-semibold hover:bg-accent-red/10 transition-colors">
             Delete Data
           </button>
         </div>
       </div>
+      <ToastContainer toasts={toasts} />
     </motion.div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useToast, ToastContainer } from "@/components/ui/Toast";
 
 const riskAlerts = [
   { id: "RISK-001", type: "Academic Integrity", desc: "3 students in ECE show identical code DNA patterns in Lab 7", severity: "Critical", dept: "ECE", time: "2 hours ago", status: "Open" },
@@ -22,6 +23,8 @@ export default function RiskCompliancePage() {
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } };
   const item = { hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0 } };
 
+    const { toasts, show } = useToast();
+
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 max-w-[1400px]">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -30,7 +33,7 @@ export default function RiskCompliancePage() {
           <p className="text-sm text-text-muted">Proactive risk detection and accreditation-ready compliance tracking</p>
         </div>
         <div className="flex gap-3">
-          <button className="px-4 py-2.5 rounded-xl bg-bg-hover border border-border-default text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors">
+          <button onClick={() => show("Exporting risk alerts...", "info")} className="px-4 py-2.5 rounded-xl bg-bg-hover border border-border-default text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors">
             Export Audit Report
           </button>
         </div>
@@ -83,7 +86,7 @@ export default function RiskCompliancePage() {
               <p className="text-xs text-text-secondary leading-relaxed ml-0 md:ml-16">{alert.desc}</p>
               <div className="flex items-center gap-3 mt-3 ml-0 md:ml-16">
                 <span className="text-[10px] text-text-muted">Dept: {alert.dept}</span>
-                <button className="text-[10px] text-accent-amber hover:underline">Investigate →</button>
+                <button onClick={() => show("Opening investigation panel...", "info")} className="text-[10px] text-accent-amber hover:underline">Investigate →</button>
               </div>
             </div>
           ))}
@@ -114,6 +117,7 @@ export default function RiskCompliancePage() {
           ))}
         </div>
       </motion.div>
+      <ToastContainer toasts={toasts} />
     </motion.div>
   );
 }

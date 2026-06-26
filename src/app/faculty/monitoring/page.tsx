@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import GlowOrb from "@/components/ui/GlowOrb";
+import { useToast, ToastContainer } from "@/components/ui/Toast";
 
 // Mock 30 students in a lab grid
 const studentGrid = Array.from({ length: 30 }, (_, i) => {
@@ -23,6 +24,8 @@ const studentGrid = Array.from({ length: 30 }, (_, i) => {
 export default function LiveMonitoringPage() {
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
   const item = { hidden: { opacity: 0, scale: 0.95 }, show: { opacity: 1, scale: 1 } };
+
+    const { toasts, show } = useToast();
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
@@ -68,13 +71,14 @@ export default function LiveMonitoringPage() {
             )}
             
             <div className="absolute inset-0 bg-gradient-to-t from-bg-primary/90 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-              <button className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-accent-blue text-white shadow-lg">
+              <button onClick={() => show("Sending help ping...", "info")} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-accent-blue text-white shadow-lg">
                 View Screen
               </button>
             </div>
           </motion.div>
         ))}
       </motion.div>
+      <ToastContainer toasts={toasts} />
     </motion.div>
   );
 }
