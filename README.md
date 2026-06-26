@@ -7,9 +7,17 @@
   <img src="https://img.shields.io/badge/Gemini_AI-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Google Gemini" />
 </div>
 
+<h3 align="center">
+  <a href="https://open-desk-demo.vercel.app/">🔴 View Live Demo Here</a>
+</h3>
+
+<br />
+
 <br />
 
 **OpenDesk** is a futuristic, AI-native academic platform designed to replace traditional LMS environments with a behavior-reactive, immersive, and data-driven workflow. By combining a live local code compilation engine with context-aware AI mentorship, OpenDesk transforms practical labs, assignments, and Viva assessments into a seamless and highly engaging learning experience.
+
+> **Note:** The live demo is hosted on Vercel. Due to serverless environment restrictions on Vercel, the local `child_process` compiler is optimized for local clone usage. To experience the blazing-fast local compiler, please run the project locally.
 
 ## ✨ Key Features
 
@@ -33,6 +41,10 @@
 - **Code Editor:** Monaco Editor (`@monaco-editor/react`)
 - **Backend & State:** Next.js Server Actions, Supabase (for persistent DB), local Node `child_process` for secure compilation loops.
 - **Visuals:** Recharts for data visualizations.
+
+## 📸 Screenshots
+
+*(Coming Soon - Add your high-res screenshots of the Student Dashboard, AI Mentor, and Faculty Analytics here!)*
 
 ## ⚙️ Quick Start
 
