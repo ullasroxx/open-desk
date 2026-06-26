@@ -17,10 +17,10 @@ export default function VivaPage() {
   const [answer, setAnswer] = useState("");
   const [confidence, setConfidence] = useState(72);
 
-  if (!started) {
-      const { toasts, show } = useToast();
+  const { toasts, show } = useToast();
 
-  return (
+  if (!started) {
+    return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center min-h-[70vh]">
         <div className="text-center max-w-lg">
           <motion.div className="w-24 h-24 mx-auto mb-8 rounded-3xl bg-gradient-to-br from-accent-purple to-accent-pink flex items-center justify-center"

@@ -15,13 +15,9 @@ export function isSupabaseConfigured(): boolean {
   );
 }
 
-/**
- * Browser-side Supabase client.
- * Returns null if credentials are not configured.
- */
 export function createClient() {
-  if (!isSupabaseConfigured()) {
-    return null;
-  }
-  return createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  return createBrowserClient(
+    SUPABASE_URL || "https://placeholder.supabase.co",
+    SUPABASE_ANON_KEY || "placeholder"
+  );
 }
