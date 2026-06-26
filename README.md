@@ -8,7 +8,7 @@
 </div>
 
 <h3 align="center">
-  <a href="https://open-desk-demo.vercel.app/">🔴 View Live Demo Here</a>
+  <a href="https://open-desk-cyan.vercel.app/">🔴 View Live Demo Here</a>
 </h3>
 
 <br />
